@@ -14,6 +14,7 @@
 | --- | --- | --- | --- | --- |
 | `fpk/tianshu-nav-1.00.009-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包 | 63.0 MB | `121E7447ADBCE6A38E3324D509343BEEB0788C3049B706B8591BAF81C920994C` |
 | `fpk/tianshu-nav-1.00.009-arm.fpk` | ARM64 | 飞牛 fnOS 安装包 | 63.3 MB | `B437122BCF3EECEEEAB6D6B3122F07C678AFCD9424955D41A9A2C37419FCBA8F` |
+| `docker/tianshu-nav-v1.00.009.zip` | x86 / ARM 通用 | Docker 在线部署包（不含镜像，联网拉取） | 0.7 MB | `8F7880CC14ABB3BFBA997ACFCB9B66D336D337D71203C1819042B7C857DE41CC` |
 | `docker/tianshu-nav-docker-1.00.009-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像） | 60.0 MB | `433AA81B87DC6148C299EDDB32DECF50DCBDFE8853D5C15A15376F88DCA85E3D` |
 | `docker/tianshu-nav-docker-1.00.009-arm.zip` | ARM64 | Docker 离线部署包（含镜像） | 60.0 MB | `6EF21A947E162DC7EAB108E503CB5C64CDEB57E4B0A12432B22DEC93D4D3890E` |
 
@@ -27,7 +28,13 @@
 2. 打开飞牛 fnOS「应用中心 → 手动安装」，选择该文件并安装；
 3. 安装完成后打开应用，浏览器访问 `http://<飞牛IP>:16080`。
 
-### Docker（离线部署包）
+### Docker（在线部署包，需联网）
+
+1. 下载 `tianshu-nav-v1.00.009.zip` 并解压；
+2. 启动服务：`docker compose up -d`（首次启动自动拉取基础镜像，需联网）；
+3. 浏览器访问 `http://<主机IP>:16080`（默认端口可在 `docker-compose.yml` 中修改冒号左侧端口）。
+
+### Docker（离线部署包，含镜像）
 
 1. 下载对应架构的 zip 并解压；
 2. 导入镜像：`docker load -i tianshu-nav-image.tar`；
