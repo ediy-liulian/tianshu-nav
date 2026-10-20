@@ -1,0 +1,15 @@
+# 天枢导航 GitHub 产物仓库 .gitignore
+# 本仓库发布 fpk 与 docker 安装包，.fpk / .zip 均需入库，勿忽略
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+
+# 日志与临时文件
+*.log
+*.tmp
+~$*
