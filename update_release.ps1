@@ -10,6 +10,7 @@
 #   3. 清单解析正则适配新格式  | 包 | 文件 | `HASH` | 大小 B |
 #   4. README 末尾清单链接随版本更新
 #   5. 版本号替换正则兼容 1.1.x 与 1.00.x（先读出旧版本号再全量替换）
+#   6. 版本排序统一用 [version] 比较，避免 PowerShell 对数组排序键的不稳定行为
 # ============================================================
 $ErrorActionPreference = 'Stop'
 $repo = $PSScriptRoot
@@ -29,8 +30,8 @@ if (-not $roundDirs) {
 }
 $roundDir = $roundDirs | ForEach-Object {
     $v = [regex]::Match($_.Name, '^第\d+轮交付包_v([0-9.]+)$').Groups[1].Value
-    [PSCustomObject]@{ Dir = $_; Ver = $v; Parts = ($v -split '\.' | ForEach-Object { [int]$_ }) }
-} | Sort-Object { $_.Parts } -Descending | Select-Object -First 1
+    [PSCustomObject]@{ Dir = $_; Ver = $v }
+} | Sort-Object { [version]$_.Ver } -Descending | Select-Object -First 1
 $ver = $roundDir.Ver
 $roundPath = $roundDir.Dir.FullName
 Write-Host ('检测到最新版本：{0}（目录 {1}）' -f $ver, $roundDir.Dir.Name) -ForegroundColor Green
@@ -79,7 +80,7 @@ Get-ChildItem -LiteralPath (Join-Path $repo 'docker') -Filter '*.zip' -File -Err
 }
 $vers = $vers | Sort-Object -Unique
 $prev = if ($vers.Count -ge 2) {
-    ($vers | Sort-Object { ($_ -split '\.' | ForEach-Object { [int]$_ }) } -Descending)[1]
+    ($vers | Sort-Object { [version]$_ } -Descending)[1]
 } else { '' }
 $keep = @($ver, $prev, '1.00.001') | Where-Object { $_ }
 Write-Host ('保留版本：{0}' -f ($keep -join ', ')) -ForegroundColor DarkGray
