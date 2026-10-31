@@ -1,6 +1,6 @@
 # 天枢导航（Tianshu Nav）· 客户端安装包
 
-> 面向内网 / 外网的统一网址导航门户：内网点击即达、外网自动切换，无需记忆端口。本仓库发布**客户端安装包**（飞牛 fnOS FPK 安装包 + Docker 离线部署包，x86 / ARM 双架构）。
+> 面向内网 / 外网的统一网址导航门户：内网点击即达、外网自动切换，无需记忆端口。本仓库发布**客户端安装包**（飞牛 fnOS FPK 安装包 + Docker 部署包，x86 / ARM 双架构）；Docker 部署包分【离线（含镜像，开箱即用）】与【在线（本地从混淆代码构建，约 2MB）】两种，均为**混淆版**。
 
 **当前版本：1.1.010**（客户端 / 服务器端双端同号）
 
@@ -16,6 +16,8 @@
 | `fpk/tianshu-nav-1.1.010-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包（混淆版） | 61.8 MB | `D74C66F74929856D1BC61928938E11F03D42290FFC1C80C3C73AE2DBE963CA0B` |
 | `docker/tianshu-nav-docker-1.1.010-arm.zip` | ARM64 | Docker 离线部署包（含镜像，混淆版） | 60.2 MB | `DD5EC828282D6E355C538FB6FC90222CE42F36173E8BF495C5358FD509EEA0FC` |
 | `docker/tianshu-nav-docker-1.1.010-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像，混淆版） | 60.6 MB | `4CF1A0519892A742FEEC364F8A783324F759C0E653BF867C67725A7A3FEC88FF` |
+| `docker/tianshu-nav-docker-online-1.1.010-x86.zip` | x86 / amd64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.1 MB | `74686D1ED3A6F95AC4D3568C73C9C49A75139FC2D2B9BB4AA49D0590845FAFC5` |
+| `docker/tianshu-nav-docker-online-1.1.010-arm.zip` | ARM64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.1 MB | `59B8B417C51CA38D55991A234CF4A20B8551EEE558F990B4191984F4A6C3A12B` |
 
 完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.1.010.md`](SHA256清单-正式版递增-v1.1.010.md)。
 
@@ -29,12 +31,24 @@
 
 ### Docker（离线部署包，含镜像 · 推荐）
 
-> 本仓库仅发布「含镜像的离线部署包」（x86 / ARM 双架构），适用于无外网或内网环境，开箱即用。如需「联网拉取镜像」的在线部署方式，请另行告知，我再补充对应包。
+> 适用于无外网或内网环境，开箱即用（x86 / ARM 双架构）。
 
 1. 下载对应架构的 zip 并解压；
 2. 导入镜像：`docker load -i tianshu-nav-image-<架构>.tar`；
 3. 启动服务：`docker compose up -d`；
 4. 浏览器访问 `http://<主机IP>:16080`（默认端口可在 `docker-compose.yml` 中修改冒号左侧端口）。
+
+### Docker（在线部署包，本地构建 · 混淆版）
+
+> 适用于有外网的环境。包内**不含镜像**，仅含混淆后的代码（`server/` + `public/`）与 `Dockerfile`，首次部署由 Docker **从本地混淆代码自动构建镜像**（需联网拉取 `node:22-alpine` 基础镜像，约 40MB）。代码为混淆版，不含可读源码，避免泄露与盗版。
+
+1. 下载对应架构的 `tianshu-nav-docker-online-<版本>-<架构>.zip` 并解压；
+2. 安装脚本（自动构建镜像并启动）：`sh install.sh`；
+3. 浏览器访问 `http://<主机IP>:16080`。
+4. 升级：`sh update.sh`。
+
+- 初始账号 `admin` ／ 初始密码 `ediy666`，数据保存在 `./data`，重装/升级不删除。
+- 说明：在线包体积仅约 2MB（离线包含镜像约 60MB），区别仅在于镜像获取方式；两者运行效果一致。
 
 ### 首次登录
 

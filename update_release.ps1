@@ -5,8 +5,12 @@
 # 前提：新产物已由打包脚本生成到 03-产物归档（按「第N轮交付包_vX」嵌套目录）
 #
 # ★ 铁律（项目规定，强制）★
-#   1. GitHub 只发布【客户端飞牛 FPK】+【Docker 离线部署包】，且必须为【混淆版（OBF）】。
-#      绝不发布：客户端完整包 / 客户端升级包 / 未混淆源码包 / 服务器端包 / “在线部署包”。
+#   1. GitHub 只发布【客户端飞牛 FPK】+【Docker 部署包】，且必须为【混淆版（OBF）】。
+#      Docker 部署包分两种，均合规：
+#        - 离线部署包（含预构建镜像 tar，约 60MB）
+#        - 在线部署包（不含镜像，仅含混淆后的 server/ + public/ + Dockerfile，本地构建镜像，约 2MB）
+#      绝不发布：客户端完整包 / 客户端升级包 / 未混淆源码包 / 服务器端包。
+#      “在线部署包”仅限混淆版（本地从混淆代码构建，不含可读源码，防泄露与盗版）。
 #   2. 历史版本只保留【最近 3 个】，更早版本不再留存，避免仓库越来越大。
 #
 # 相对 v1 修正点：
@@ -25,6 +29,10 @@ $ErrorActionPreference = 'Stop'
 $repo = $PSScriptRoot
 $projRoot = 'E:\1-Agent-works\A-my_project\天枢导航'
 $src  = Join-Path $projRoot '03-产物归档'
+
+# 解析 Python（优先用 WorkBuddy 捆绑的真实 python，避免 WindowsApps 桩）
+$py = (Get-ChildItem 'C:\Users\Administrator\.workbuddy\binaries\python\versions\*\python.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+if (-not $py) { $py = 'python3' }
 
 Write-Host ''
 Write-Host '========== 天枢导航 GitHub 仓库一键更新（FPK + Docker 离线，仅混淆版，保留近3版） ==========' -ForegroundColor Cyan
@@ -78,6 +86,41 @@ $manifestSrc = Join-Path $roundPath "SHA256清单-正式版递增-v$ver.md"
 $manifestDst = Join-Path $repo "SHA256清单-正式版递增-v$ver.md"
 Copy-Item -LiteralPath $manifestSrc -Destination $manifestDst -Force
 
+# ---------- 2.5 构建 Docker 在线部署包（混淆版，本地构建镜像，约 2MB） ----------
+# 从「Docker 离线部署包」的已验证镜像层中抽取 server/(含 node_modules) + public/（均为混淆版），
+# 加 Dockerfile / docker-compose.yml(build:) / 脚本，打包为 docker/tianshu-nav-docker-online-V-{x86,arm}.zip
+Write-Host '构建 Docker 在线部署包（混淆版）……' -ForegroundColor Cyan
+& $py (Join-Path $repo 'build_online_pkg.py') $projRoot $ver (Get-Date -Format 'yyyy-MM-dd')
+if ($LASTEXITCODE -ne 0) {
+    Write-Host '在线包构建失败（Python 步骤异常），终止' -ForegroundColor Red
+    exit 1
+}
+Write-Host 'Docker 在线部署包已构建（x86 / arm）' -ForegroundColor DarkGray
+
+# ---------- 2.6 把在线包哈希追加进 SHA256 清单（置于表格数据区、注释之前） ----------
+function Get-Sha256($f) {
+    $algo = [System.Security.Cryptography.SHA256]::Create()
+    $bytes = [System.IO.File]::ReadAllBytes($f)
+    return (($algo.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join '')
+}
+$mfLines = Get-Content -LiteralPath $manifestDst -Encoding UTF8
+$newRows = @()
+foreach ($oname in @("tianshu-nav-docker-online-$ver-x86.zip", "tianshu-nav-docker-online-$ver-arm.zip")) {
+    $of = Join-Path $repo ("docker\" + $oname)
+    if (-not (Test-Path -LiteralPath $of)) { continue }
+    $size = (Get-Item -LiteralPath $of).Length
+    $hash = Get-Sha256 $of
+    $newRows += ("| Docker部署包 | {0} | `{1}` | {2} B |" -f $oname, $hash, $size)
+    Write-Host ('已登记在线包哈希：{0}' -f $oname) -ForegroundColor DarkGray
+}
+$lastTableIdx = -1
+for ($i = 0; $i -lt $mfLines.Count; $i++) { if ($mfLines[$i] -match '^\|') { $lastTableIdx = $i } }
+if ($lastTableIdx -ge 0 -and $newRows.Count -gt 0) {
+    $mfLines = $mfLines[0..$lastTableIdx] + $newRows + $mfLines[($lastTableIdx + 1)..($mfLines.Count - 1)]
+    [IO.File]::WriteAllText($manifestDst, ($mfLines -join "`n") + "`n", (New-Object System.Text.UTF8Encoding($false)))
+    Write-Host ('SHA256 清单已追加 {0} 个在线包条目' -f $newRows.Count) -ForegroundColor DarkGray
+}
+
 # ---------- 3. 清理历史（只保留最近 3 个版本） ----------
 $vers = @()
 Get-ChildItem -LiteralPath (Join-Path $repo 'fpk') -Filter 'tianshu-nav-*-*.fpk' -File -ErrorAction SilentlyContinue | ForEach-Object {
@@ -119,7 +162,9 @@ $published = @(
     "tianshu-nav-$ver-x86.fpk",
     "tianshu-nav-$ver-arm.fpk",
     "tianshu-nav-docker-$ver-x86.zip",
-    "tianshu-nav-docker-$ver-arm.zip"
+    "tianshu-nav-docker-$ver-arm.zip",
+    "tianshu-nav-docker-online-$ver-x86.zip",
+    "tianshu-nav-docker-online-$ver-arm.zip"
 )
 $rowRe = '^\|[^|]*\|\s*([A-Za-z0-9_.\-]+\.(?:fpk|zip))\s*\|'
 $mLines = Get-Content -LiteralPath $manifestDst -Encoding UTF8 | ForEach-Object {
@@ -165,6 +210,9 @@ if (Test-Path -LiteralPath $manifest) {
         if ($file -match '^tianshu-nav-.*\.fpk$') {
             $arch = if ($file -match '-x86\.fpk$') { 'x86 / amd64' } else { 'ARM64' }
             $rows += @{ path = "fpk/$file"; arch = $arch; desc = '飞牛 fnOS 安装包（混淆版）'; size = $sizeMB; sha = $sha }
+        } elseif ($file -match '^tianshu-nav-docker-online-.*\.zip$') {
+            $arch = if ($file -match '-x86\.zip$') { 'x86 / amd64' } else { 'ARM64' }
+            $rows += @{ path = "docker/$file"; arch = $arch; desc = 'Docker 在线部署包（混淆版，本地构建镜像）'; size = $sizeMB; sha = $sha }
         } elseif ($file -match '^tianshu-nav-docker-.*\.zip$') {
             $arch = if ($file -match '-x86\.zip$') { 'x86 / amd64' } else { 'ARM64' }
             $rows += @{ path = "docker/$file"; arch = $arch; desc = 'Docker 离线部署包（含镜像，混淆版）'; size = $sizeMB; sha = $sha }
@@ -194,9 +242,12 @@ Write-Host 'README 已更新（版本号 / 日期 / 下载表 / 清单链接）'
 
 # ---------- 5. 提交并推送 ----------
 Write-Host '提交并推送中……' -ForegroundColor Cyan
+$prevEAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'   # git 的 CRLF 提示走 stderr，不应中断脚本
 git -C $repo add -A
-git -C $repo commit -m "更新：天枢导航 $ver（仅 FPK + Docker 离线，混淆版，保留近3版）"
+git -C $repo commit -m "更新：天枢导航 $ver（FPK + Docker 离线/在线，混淆版，保留近3版）"
 git -C $repo push
+$ErrorActionPreference = $prevEAP
 
 Write-Host ''
 Write-Host ('========== 完成：仓库已更新到 {0} ==========' -f $ver) -ForegroundColor Green
