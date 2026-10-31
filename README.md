@@ -12,11 +12,10 @@
 
 | 文件 | 架构 | 说明 | 大小 | SHA256 |
 | --- | --- | --- | --- | --- |
-| `docker/tianshu-nav-v1.1.010.zip` | x86 / ARM 通用 | Docker 在线部署包（不含镜像，联网拉取） | 0.8 MB | `66D8511C09E6D6817411B22EDFE6C32EC953310DACB75D52B602BBA7073BD2DC` |
-| `fpk/tianshu-nav-1.1.010-arm.fpk` | ARM64 | 飞牛 fnOS 安装包 | 61.4 MB | `9ECB8892351C30C00A3C3C3D3636A04D5A9828E3239F43CAAF1499674C400BC3` |
-| `fpk/tianshu-nav-1.1.010-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包 | 61.8 MB | `D74C66F74929856D1BC61928938E11F03D42290FFC1C80C3C73AE2DBE963CA0B` |
-| `docker/tianshu-nav-docker-1.1.010-arm.zip` | ARM64 | Docker 离线部署包（含镜像） | 60.2 MB | `DD5EC828282D6E355C538FB6FC90222CE42F36173E8BF495C5358FD509EEA0FC` |
-| `docker/tianshu-nav-docker-1.1.010-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像） | 60.6 MB | `4CF1A0519892A742FEEC364F8A783324F759C0E653BF867C67725A7A3FEC88FF` |
+| `fpk/tianshu-nav-1.1.010-arm.fpk` | ARM64 | 飞牛 fnOS 安装包（混淆版） | 61.4 MB | `9ECB8892351C30C00A3C3C3D3636A04D5A9828E3239F43CAAF1499674C400BC3` |
+| `fpk/tianshu-nav-1.1.010-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包（混淆版） | 61.8 MB | `D74C66F74929856D1BC61928938E11F03D42290FFC1C80C3C73AE2DBE963CA0B` |
+| `docker/tianshu-nav-docker-1.1.010-arm.zip` | ARM64 | Docker 离线部署包（含镜像，混淆版） | 60.2 MB | `DD5EC828282D6E355C538FB6FC90222CE42F36173E8BF495C5358FD509EEA0FC` |
+| `docker/tianshu-nav-docker-1.1.010-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像，混淆版） | 60.6 MB | `4CF1A0519892A742FEEC364F8A783324F759C0E653BF867C67725A7A3FEC88FF` |
 
 完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.1.010.md`](SHA256清单-正式版递增-v1.1.010.md)。
 
@@ -28,16 +27,12 @@
 2. 打开飞牛 fnOS「应用中心 → 手动安装」，选择该文件并安装；
 3. 安装完成后打开应用，浏览器访问 `http://<飞牛IP>:16080`。
 
-### Docker（在线部署包，需联网）
+### Docker（离线部署包，含镜像 · 推荐）
 
-1. 下载 `tianshu-nav-v1.1.010.zip` 并解压；
-2. 启动服务：`docker compose up -d`（首次启动自动拉取基础镜像，需联网）；
-3. 浏览器访问 `http://<主机IP>:16080`（默认端口可在 `docker-compose.yml` 中修改冒号左侧端口）。
-
-### Docker（离线部署包，含镜像）
+> 本仓库仅发布「含镜像的离线部署包」（x86 / ARM 双架构），适用于无外网或内网环境，开箱即用。如需「联网拉取镜像」的在线部署方式，请另行告知，我再补充对应包。
 
 1. 下载对应架构的 zip 并解压；
-2. 导入镜像：`docker load -i tianshu-nav-image.tar`；
+2. 导入镜像：`docker load -i tianshu-nav-image-<架构>.tar`；
 3. 启动服务：`docker compose up -d`；
 4. 浏览器访问 `http://<主机IP>:16080`（默认端口可在 `docker-compose.yml` 中修改冒号左侧端口）。
 
@@ -62,7 +57,7 @@
 | --- | --- |
 | 1.1.010 | 当前版本（客户端 / 服务器端同号，2026-10-31） |
 
-按项目输出物命名规范：历史版本仅保留最新 + 上一版 + 正式首版。
+按项目铁律：GitHub 仅保留最近 3 个版本（更早版本不再留存，避免仓库越来越大）。
 
 ## 交流与支持
 
