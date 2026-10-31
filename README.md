@@ -2,7 +2,7 @@
 
 > 面向内网 / 外网的统一网址导航门户：内网点击即达、外网自动切换，无需记忆端口。本仓库发布**客户端安装包**（飞牛 fnOS FPK 安装包 + Docker 离线部署包，x86 / ARM 双架构）。
 
-**当前版本：1.00.009**（客户端 / 服务器端双端同号）
+**当前版本：1.1.009**（客户端 / 服务器端双端同号）
 
 - 在线演示：https://nav.ediy.net/demo/
 - 产品主页：https://nav.ediy.net
@@ -12,13 +12,13 @@
 
 | 文件 | 架构 | 说明 | 大小 | SHA256 |
 | --- | --- | --- | --- | --- |
-| `fpk/tianshu-nav-1.00.009-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包 | 63.0 MB | `121E7447ADBCE6A38E3324D509343BEEB0788C3049B706B8591BAF81C920994C` |
-| `fpk/tianshu-nav-1.00.009-arm.fpk` | ARM64 | 飞牛 fnOS 安装包 | 63.3 MB | `B437122BCF3EECEEEAB6D6B3122F07C678AFCD9424955D41A9A2C37419FCBA8F` |
-| `docker/tianshu-nav-v1.00.009.zip` | x86 / ARM 通用 | Docker 在线部署包（不含镜像，联网拉取） | 0.7 MB | `8F7880CC14ABB3BFBA997ACFCB9B66D336D337D71203C1819042B7C857DE41CC` |
-| `docker/tianshu-nav-docker-1.00.009-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像） | 60.0 MB | `433AA81B87DC6148C299EDDB32DECF50DCBDFE8853D5C15A15376F88DCA85E3D` |
-| `docker/tianshu-nav-docker-1.00.009-arm.zip` | ARM64 | Docker 离线部署包（含镜像） | 60.0 MB | `6EF21A947E162DC7EAB108E503CB5C64CDEB57E4B0A12432B22DEC93D4D3890E` |
+| `docker/tianshu-nav-v1.1.009.zip` | x86 / ARM 通用 | Docker 在线部署包（不含镜像，联网拉取） | 0.8 MB | `56E2919FBAF9876F426FC605D8CD7ECB8B38EC54DD088C605C7691FAE7297893` |
+| `fpk/tianshu-nav-1.1.009-arm.fpk` | ARM64 | 飞牛 fnOS 安装包 | 61.4 MB | `37171B862B849F574A3019642352EB48E5F50122F37276280BFF9AC4D818AAE1` |
+| `fpk/tianshu-nav-1.1.009-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包 | 61.8 MB | `2D08A24F2AF21A6B571F088D73A7E55BD0A59A30724C6DB886A7ADECF16855C7` |
+| `docker/tianshu-nav-docker-1.1.009-arm.zip` | ARM64 | Docker 离线部署包（含镜像） | 60.1 MB | `D140594001B879B8C23BA73015F8E4FE3667754B8D1E46BA52D33E30FD998F5E` |
+| `docker/tianshu-nav-docker-1.1.009-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像） | 60.6 MB | `315D4047BA2F1BA3EEBADFB9E4B5E37740890FB3DFD65421F43FEEA105CF718D` |
 
-完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.00.009.md`](SHA256清单-正式版递增-v1.00.009.md)。
+完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.1.009.md`](SHA256清单-正式版递增-v1.1.009.md)。
 
 ## 安装说明
 
@@ -30,7 +30,7 @@
 
 ### Docker（在线部署包，需联网）
 
-1. 下载 `tianshu-nav-v1.00.009.zip` 并解压；
+1. 下载 `tianshu-nav-v1.1.009.zip` 并解压；
 2. 启动服务：`docker compose up -d`（首次启动自动拉取基础镜像，需联网）；
 3. 浏览器访问 `http://<主机IP>:16080`（默认端口可在 `docker-compose.yml` 中修改冒号左侧端口）。
 
@@ -60,7 +60,7 @@
 
 | 版本 | 说明 |
 | --- | --- |
-| 1.00.009 | 当前版本（客户端 / 服务器端同号，2026-10-20） |
+| 1.1.009 | 当前版本（客户端 / 服务器端同号，2026-10-31） |
 
 按项目输出物命名规范：历史版本仅保留最新 + 上一版 + 正式首版。
 
