@@ -5,7 +5,7 @@
 来源：对应架构 FPK 内的 app.tgz，仅抽取 OBF 的 server/(含 node_modules) + public/，
 不抽取 fnOS 专用目录(cmd/ui/config/images)，避免泄露非 Docker 所需内容。
 """
-import os, io, tarfile, zipfile, shutil, json, sys
+import os, io, tarfile, zipfile, shutil, json, sys, re, glob, tempfile
 
 # 输出目录：脚本自身所在目录下的 docker/（即发布仓的 docker/）
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,9 +15,25 @@ PROJ_ROOT = sys.argv[1] if len(sys.argv) > 1 else r"E:/1-Agent-works/A-my_projec
 VERSION = sys.argv[2] if len(sys.argv) > 2 else "1.1.010"
 BUILD = sys.argv[3] if len(sys.argv) > 3 else "2026-10-31"
 # 来源：对应架构的「Docker 离线部署包」（已验证可运行的镜像），从中抽取 server/(含 node_modules) + public/
+# 动态定位「第N轮交付包_v{VERSION}」目录（修复：原硬编码第164轮，版本推进后路径失效）
+def _find_round_dir(version):
+    base = os.path.join(PROJ_ROOT, "03-产物归档")
+    cands = []
+    for d in glob.glob(os.path.join(base, "第*轮交付包_v%s" % version)):
+        if not os.path.isdir(d):
+            continue
+        m = re.search(r"第(\d+)轮", os.path.basename(d))
+        cands.append((int(m.group(1)) if m else 0, d))
+    if not cands:
+        sys.stderr.write("未找到版本 %s 的交付包目录\n" % version)
+        sys.exit(2)
+    cands.sort(reverse=True)
+    return cands[0][1]
+
+ROUND_DIR = _find_round_dir(VERSION)
 OFFLINE_ZIP = {
-    "x86": os.path.join(PROJ_ROOT, "03-产物归档", "第164轮交付包_v" + VERSION, "Docker离线部署包", "tianshu-nav-docker-%s-x86.zip" % VERSION),
-    "arm": os.path.join(PROJ_ROOT, "03-产物归档", "第164轮交付包_v" + VERSION, "Docker离线部署包", "tianshu-nav-docker-%s-arm.zip" % VERSION),
+    "x86": os.path.join(ROUND_DIR, "Docker离线部署包", "tianshu-nav-docker-%s-x86.zip" % VERSION),
+    "arm": os.path.join(ROUND_DIR, "Docker离线部署包", "tianshu-nav-docker-%s-arm.zip" % VERSION),
 }
 
 DOCKERFILE = """\
@@ -182,10 +198,8 @@ def extract_obf(offline_zip, dst):
 
 
 def build(arch):
-    dst = os.path.join("/tmp/onlinebuild", arch)
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    os.makedirs(dst, exist_ok=True)
+    # 每次使用系统临时区唯一目录：避免 rmtree 大目录触发批量删除门禁，也不污染发布仓
+    dst = tempfile.mkdtemp(prefix="tianshu_online_%s_%s_" % (VERSION, arch))
     # 1) 抽取 OBF server/ + public/（来自已验证镜像层）
     extract_obf(OFFLINE_ZIP[arch], dst)
     # 2) 写入 Docker 构建相关文件
