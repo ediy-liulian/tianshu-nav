@@ -132,27 +132,28 @@ Get-ChildItem -LiteralPath (Join-Path $repo 'docker') -Filter '*.zip' -File -Err
     if ($m.Success) { $vers += $m.Groups[1].Value }
 }
 $vers = $vers | Sort-Object -Unique { [version]$_ } -Descending
-$keep = $vers | Select-Object -First 3
+# 临时：本轮用户要求仅保留最新版（删历史），跑完还原为 First 3（铁律：保留近3版）
+$keep = $vers | Select-Object -First 1
 Write-Host ('保留版本（最近 3 个）：{0}' -f ($keep -join ', ')) -ForegroundColor DarkGray
 foreach ($dir in @('fpk', 'docker')) {
     Get-ChildItem -LiteralPath (Join-Path $repo $dir) -File -ErrorAction SilentlyContinue | ForEach-Object {
         $m = [regex]::Match($_.Name, '([0-9]+\.[0-9]+\.[0-9]+)')
         if ($m.Success -and $m.Groups[1].Value -notin $keep) {
-            Remove-Item -LiteralPath $_.FullName -Force
+            git -C $repo rm -f --ignore-unmatch -- $_.FullName
             Write-Host ('清理旧版本：{0}' -f $_.Name) -ForegroundColor DarkGray
         }
     }
 }
 # 额外保险：删除任何“在线部署包”残留（docker/tianshu-nav-v*.zip 模式，铁律不允许发布）
 Get-ChildItem -LiteralPath (Join-Path $repo 'docker') -Filter 'tianshu-nav-v*.zip' -File -ErrorAction SilentlyContinue | ForEach-Object {
-    Remove-Item -LiteralPath $_.FullName -Force
+    git -C $repo rm -f --ignore-unmatch -- $_.FullName
     Write-Host ('清理违规在线包残留：{0}' -f $_.Name) -ForegroundColor DarkGray
 }
 # 清理旧版 SHA256 清单（只保留最近 3 个版本对应的清单）
 Get-ChildItem -LiteralPath $repo -Filter 'SHA256清单-正式版递增-v*.md' -File -ErrorAction SilentlyContinue | ForEach-Object {
     $m = [regex]::Match($_.Name, 'v([0-9.]+)\.md$')
     if ($m.Success -and $m.Groups[1].Value -notin $keep) {
-        Remove-Item -LiteralPath $_.FullName -Force
+        git -C $repo rm -f --ignore-unmatch -- $_.FullName
         Write-Host ('清理旧清单：{0}' -f $_.Name) -ForegroundColor DarkGray
     }
 }
@@ -245,7 +246,7 @@ Write-Host '提交并推送中……' -ForegroundColor Cyan
 $prevEAP = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'   # git 的 CRLF 提示走 stderr，不应中断脚本
 git -C $repo add -A
-git -C $repo commit -m "更新：天枢导航 $ver（FPK + Docker 离线/在线，混淆版，保留近3版）"
+git -C $repo commit -m "更新：天枢导航 $ver（FPK + Docker 离线/在线，混淆版，仅保留最新版）"
 git -C $repo push
 $ErrorActionPreference = $prevEAP
 

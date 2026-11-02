@@ -2,7 +2,7 @@
 
 > 面向内网 / 外网的统一网址导航门户：内网点击即达、外网自动切换，无需记忆端口。本仓库发布**客户端安装包**（飞牛 fnOS FPK 安装包 + Docker 部署包，x86 / ARM 双架构）；Docker 部署包分【离线（含镜像，开箱即用）】与【在线（本地从混淆代码构建，约 2MB）】两种，均为**混淆版**。
 
-**当前版本：1.1.021**（客户端 / 服务器端双端同号）
+**当前版本：1.1.023**（客户端 / 服务器端双端同号）
 
 - 在线演示：https://nav.ediy.net/demo/
 - 产品主页：https://nav.ediy.net
@@ -12,14 +12,14 @@
 
 | 文件 | 架构 | 说明 | 大小 | SHA256 |
 | --- | --- | --- | --- | --- |
-| `fpk/tianshu-nav-1.1.021-arm.fpk` | ARM64 | 飞牛 fnOS 安装包（混淆版） | 61.4 MB | `E69D7FB956688A064B342FCDAA4A080972542AAAEBECFAD679EF26B9A73036C6` |
-| `fpk/tianshu-nav-1.1.021-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包（混淆版） | 61.9 MB | `886AC7374BBFA53047791205F9266EE9B450DBECEBB09CD60E2BE9ED7DC74A1D` |
-| `docker/tianshu-nav-docker-1.1.021-arm.zip` | ARM64 | Docker 离线部署包（含镜像，混淆版） | 60.2 MB | `CE0736016F164F1905FC9729FCC0645CDED48A30D19668A1BE409CDC7E689C50` |
-| `docker/tianshu-nav-docker-1.1.021-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像，混淆版） | 60.7 MB | `7B21FD68BF3B422BD5B4F8541771C73AA4B89A74545AF84BBDA71AE2C9EA87E8` |
-| `docker/tianshu-nav-docker-online-1.1.021-x86.zip` | x86 / amd64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.1 MB | `5E17A73C1D5FC4CAB476031DCE2964D4216C7B31D24C37F54997D27880E8A2E4` |
-| `docker/tianshu-nav-docker-online-1.1.021-arm.zip` | ARM64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `09F6C3BB84AB563DB3424F2BA815C23F849BB7C03D078DDBCF745E1276E6B264` |
+| `fpk/tianshu-nav-1.1.023-arm.fpk` | ARM64 | 飞牛 fnOS 安装包（混淆版） | 61.4 MB | `F0FD1B66E5F220BF5B34D703B2BB5C04F34168BDAA3BC1C044CA2CA7BB1FFB88` |
+| `fpk/tianshu-nav-1.1.023-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包（混淆版） | 61.9 MB | `FCA6695C1E4725B8FD05EF4DDC227D97E54057B6A8A01F834F27ACF384A08D93` |
+| `docker/tianshu-nav-docker-1.1.023-arm.zip` | ARM64 | Docker 离线部署包（含镜像，混淆版） | 60.2 MB | `0B84CABBA766EF4832F514DF414762EC6154B9B3E6CF44FB0B83534F52CC4919` |
+| `docker/tianshu-nav-docker-1.1.023-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像，混淆版） | 60.7 MB | `3CC2B6795EA43E23155103FECB5F7F6639E8C418DE499E52811BDC7096A5DFB6` |
+| `docker/tianshu-nav-docker-online-1.1.023-x86.zip` | x86 / amd64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `93D5515099BFF06C0534B021238BC3105CD2C63B396E4D336B445F3A823A251F` |
+| `docker/tianshu-nav-docker-online-1.1.023-arm.zip` | ARM64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `39ECAD3EB7D4486849D6C9D7D331D830E852AB923DDFA2E630F23100E82339A7` |
 
-完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.1.021.md`](SHA256清单-正式版递增-v1.1.021.md)。
+完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.1.023.md`](SHA256清单-正式版递增-v1.1.023.md)。
 
 ## 安装说明
 
@@ -69,7 +69,7 @@
 
 | 版本 | 说明 |
 | --- | --- |
-| 1.1.021 | 当前版本（客户端 / 服务器端同号，2026-11-01） |
+| 1.1.023 | 当前版本（客户端 / 服务器端同号，2026-11-02） |
 
 按项目铁律：GitHub 仅保留最近 3 个版本（更早版本不再留存，避免仓库越来越大）。
 
