@@ -11,7 +11,7 @@
 #        - 在线部署包（不含镜像，仅含混淆后的 server/ + public/ + Dockerfile，本地构建镜像，约 2MB）
 #      绝不发布：客户端完整包 / 客户端升级包 / 未混淆源码包 / 服务器端包。
 #      “在线部署包”仅限混淆版（本地从混淆代码构建，不含可读源码，防泄露与盗版）。
-#   2. 历史版本只保留【最近 3 个】，更早版本不再留存，避免仓库越来越大。
+#   2. 历史版本【只保留最新 1 个】：每次发新版即删除所有旧版本，仓库不留存任何历史版本（2026-11-06 用户拍板，推翻旧“保留近3版”）。
 #
 # 相对 v1 修正点：
 #   1. 源路径改到 E:\（项目迁移后位置）
@@ -22,7 +22,7 @@
 #   6. 版本排序统一用 [version] 比较
 #   7. 【铁律】只拷贝 FPK(x86/arm) + Docker 离线(x86/arm)，删除“在线部署包/客户端完整包”映射
 #   8. 【铁律】SHA256 清单只保留实际发布的 4 个文件
-#   9. 【铁律】历史版本只保留最近 3 个（原：最新+上一版+首版）
+#   9. 【铁律】历史版本只保留最新 1 个（每次发新版删除所有旧版，不留历史；2026-11-06 起生效）
 #  10. 默认密码随产品变化，README“初始密码”需人工核对（脚本不自动改写）
 # ============================================================
 $ErrorActionPreference = 'Stop'
@@ -35,7 +35,7 @@ $py = (Get-ChildItem 'C:\Users\Administrator\.workbuddy\binaries\python\versions
 if (-not $py) { $py = 'python3' }
 
 Write-Host ''
-Write-Host '========== 天枢导航 GitHub 仓库一键更新（FPK + Docker 离线，仅混淆版，保留近3版） ==========' -ForegroundColor Cyan
+Write-Host '========== 天枢导航 GitHub 仓库一键更新（FPK + Docker 离线/在线，仅混淆版，只保留最新版） ==========' -ForegroundColor Cyan
 
 # ---------- 1. 检测最新版本 ----------
 $roundDirs = Get-ChildItem -LiteralPath $src -Directory -ErrorAction SilentlyContinue |
@@ -121,7 +121,7 @@ if ($lastTableIdx -ge 0 -and $newRows.Count -gt 0) {
     Write-Host ('SHA256 清单已追加 {0} 个在线包条目' -f $newRows.Count) -ForegroundColor DarkGray
 }
 
-# ---------- 3. 清理历史（只保留最近 3 个版本） ----------
+# ---------- 3. 清理历史（只保留最新 1 个版本，删掉所有旧版） ----------
 $vers = @()
 Get-ChildItem -LiteralPath (Join-Path $repo 'fpk') -Filter 'tianshu-nav-*-*.fpk' -File -ErrorAction SilentlyContinue | ForEach-Object {
     $m = [regex]::Match($_.Name, 'tianshu-nav-([0-9.]+)-')
@@ -132,9 +132,8 @@ Get-ChildItem -LiteralPath (Join-Path $repo 'docker') -Filter '*.zip' -File -Err
     if ($m.Success) { $vers += $m.Groups[1].Value }
 }
 $vers = $vers | Sort-Object -Unique { [version]$_ } -Descending
-# 临时：本轮用户要求仅保留最新版（删历史），跑完还原为 First 3（铁律：保留近3版）
 $keep = $vers | Select-Object -First 1
-Write-Host ('保留版本（最近 3 个）：{0}' -f ($keep -join ', ')) -ForegroundColor DarkGray
+Write-Host ('保留版本（仅最新 1 个）：{0}' -f ($keep -join ', ')) -ForegroundColor DarkGray
 foreach ($dir in @('fpk', 'docker')) {
     Get-ChildItem -LiteralPath (Join-Path $repo $dir) -File -ErrorAction SilentlyContinue | ForEach-Object {
         $m = [regex]::Match($_.Name, '([0-9]+\.[0-9]+\.[0-9]+)')
@@ -149,7 +148,7 @@ Get-ChildItem -LiteralPath (Join-Path $repo 'docker') -Filter 'tianshu-nav-v*.zi
     git -C $repo rm -f --ignore-unmatch -- $_.FullName
     Write-Host ('清理违规在线包残留：{0}' -f $_.Name) -ForegroundColor DarkGray
 }
-# 清理旧版 SHA256 清单（只保留最近 3 个版本对应的清单）
+# 清理旧版 SHA256 清单（只保留最新版对应清单）
 Get-ChildItem -LiteralPath $repo -Filter 'SHA256清单-正式版递增-v*.md' -File -ErrorAction SilentlyContinue | ForEach-Object {
     $m = [regex]::Match($_.Name, 'v([0-9.]+)\.md$')
     if ($m.Success -and $m.Groups[1].Value -notin $keep) {
