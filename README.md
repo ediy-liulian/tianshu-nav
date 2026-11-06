@@ -16,8 +16,8 @@
 | `fpk/tianshu-nav-1.1.030-x86.fpk` | x86 / amd64 | 飞牛 fnOS 安装包（混淆版） | 61.9 MB | `96DFC7790B0BEBB39351821AF53EF0DB329C36C9CDC3F521F7F5F331062847CA` |
 | `docker/tianshu-nav-docker-1.1.030-arm.zip` | ARM64 | Docker 离线部署包（含镜像，混淆版） | 60.2 MB | `E0C9AD035C8F5E5120CF3DAC53AFC066175B43536857E6E9ED669BCAF9B721C0` |
 | `docker/tianshu-nav-docker-1.1.030-x86.zip` | x86 / amd64 | Docker 离线部署包（含镜像，混淆版） | 60.7 MB | `0681B44C045BCD940F8EAFCA913704957E3CD17FB06059FA369A08A79F82D9D2` |
-| `docker/tianshu-nav-docker-online-1.1.030-x86.zip` | x86 / amd64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `22330747CCD197AAD7C274640752C3E617D1C36BCBFE4AC2EC611DFC3E340959` |
-| `docker/tianshu-nav-docker-online-1.1.030-arm.zip` | ARM64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `40E04AEAE1DED09EBCC69271CFB7B0001B5A9F044CE53804606122DDB4D48B21` |
+| `docker/tianshu-nav-docker-online-1.1.030-x86.zip` | x86 / amd64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `EB2032805A880E1B2726BFC706140F0FB06EF49B7D278E329EE7E47426029B02` |
+| `docker/tianshu-nav-docker-online-1.1.030-arm.zip` | ARM64 | Docker 在线部署包（混淆版，本地构建镜像） | 2.2 MB | `5412E6E0F032FCAF3E80843BB5128986B2C6A4E66E79707A3D0791DB02E88537` |
 
 完整 SHA256 清单见 [`SHA256清单-正式版递增-v1.1.030.md`](SHA256清单-正式版递增-v1.1.030.md)。
 
@@ -69,7 +69,7 @@
 
 | 版本 | 说明 |
 | --- | --- |
-| 1.1.030 | 当前版本（客户端 / 服务器端同号，2026-11-06） |
+| 1.1.030 | 当前版本（客户端 / 服务器端同号，2026-11-07） |
 
 按项目铁律：GitHub 仅保留最新版本，每次发布新版即删除所有历史版本（不留旧版；2026-11-06 起生效，推翻旧"保留近3版"）。
 
